@@ -112,7 +112,7 @@ def perform_migrate_issues(args):
 
     checks = [
         (check_users, 'Required users presence'),
-        (check_no_issue, 'Project has no pre-existing issue'),
+        #(check_no_issue, 'Project has no pre-existing issue'),
     ]
     for i in checks:
         check(
@@ -145,6 +145,7 @@ def perform_migrate_issues(args):
         else:
             created = gitlab_project.create_issue(data, meta)
             log.info('#{iid} {title}'.format(**created))
+            sys.exit(1)
 
 
 def perform_migrate_iid(args):

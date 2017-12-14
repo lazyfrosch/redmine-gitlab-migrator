@@ -2,7 +2,7 @@
 """
 
 import logging
-
+import sys
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +17,6 @@ def redmine_uid_to_gitlab_uid(redmine_id,
                               redmine_user_index, gitlab_user_index):
     username = redmine_uid_to_login(redmine_id, redmine_user_index)
     return gitlab_user_index[username]['id']
-
 
 def convert_notes(redmine_issue_journals, redmine_user_index):
     """ Convert a list of redmine journal entries to gitlab notes
@@ -46,7 +45,7 @@ def convert_notes(redmine_issue_journals, redmine_user_index):
                     'Redmine user {} is unknown, attribute note '
                     'to current admin\n'.format(entry['user']))
                 author = None
-            yield {'body': body}, {'sudo_user': author}
+            yield {'body': body, 'created_at': entry['created_on']}, {'sudo_user': author}
 
 
 def relations_to_string(relations, issue_id):
@@ -95,7 +94,8 @@ def convert_issue(redmine_issue, redmine_user_index, gitlab_user_index,
             close_text,
             relations_text
         ),
-        'labels': [redmine_issue['tracker']['name']]
+        'labels': [redmine_issue['tracker']['name']],
+        'created_at': redmine_issue['created_on']
     }
 
     version = redmine_issue.get('fixed_version', None)
